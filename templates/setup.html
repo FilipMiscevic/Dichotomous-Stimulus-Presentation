@@ -1,0 +1,109 @@
+<html>
+
+<head>
+	<script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js" type="text/javascript"></script>
+  <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+
+  <link href="https://cdn.syncfusion.com/ej2/material.css" rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+   body {
+    touch-action: none;
+  }
+</style>
+</head>
+
+<body>
+	<div class="stackblitz-container material">
+   <div class="col-lg-8 control-section">
+    <div class="control_wrapper">
+      <!-- Initialize Uploader -->
+      <input type="file" id="fileupload" name="UploadFiles">
+      <div class="e-file-select-wrap"><button class="e-css e-btn" type="button" tabindex="0" title="Done" onclick='done()'>Done</button></div>
+    </div>
+  </div>
+  <style>
+    .control_wrapper {
+     max-width: 400px;
+     margin: auto;
+     display: table-cell;
+   }
+ </style>
+
+ <script>
+  ej.base.enableRipple(true);
+
+	// Initialize the uploader component
+	var uploadObj = new ej.inputs.Uploader({
+		asyncSettings: {
+			saveUrl: 'https://aspnetmvc.syncfusion.com/services/api/uploadbox/Save',
+			removeUrl: 'https://aspnetmvc.syncfusion.com/services/api/uploadbox/Remove'
+		},
+		removing: onFileRemove,
+		allowedExtensions:".jpg,.png,.jpeg"
+	});
+	uploadObj.appendTo('#fileupload');
+
+	function onFileRemove(args) {
+		args.postRawFile = false;
+	}
+
+  function done() {
+    var fileRaw = []
+
+    for (i = 0; i < uploadObj.filesData.length; i++) { 
+      fileRaw.push(uploadObj.filesData[i].rawFile)
+    } 
+
+    if (fileRaw[0] != undefined){
+      fr = new FileReader()
+      fr.readAsDataURL(fileRaw[0])
+
+
+      fr.onload = function() {
+
+        fileRaw[0] = fr.result
+
+        if(fileRaw[1] != undefined){
+          fr2 = new FileReader()
+          fr2.readAsDataURL(fileRaw[1])
+          fr2.onload = function() {
+
+            fileRaw[1] = fr2.result
+
+            $.getJSON('/finish_setup', {
+              leftImg:fileRaw[0],
+              rightImg:fileRaw[1],
+              success: function(response) {
+                window.location.href = 'experiment/'
+              }
+            }, function(data) {
+              console.log(data)
+            } )
+          }
+
+        } else {
+          $.getJSON('/finish_setup', {
+            leftImg:fileRaw[0],
+            success: function(response) {
+              window.location.href = 'experiment/'                          
+
+            }
+          }, function(data) {
+            console.log(data)
+          } )
+        }
+      }
+
+    }
+
+  }
+
+</script>
+
+
+</div>
+</body>
+
+</html>

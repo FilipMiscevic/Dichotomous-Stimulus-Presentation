@@ -34,7 +34,7 @@ def return_image(name, ext):
 
 @app.route('/<name>.css')
 def return_css(name):
-	return send_file(name+'.css', mimetype='text/css')
+	return send_file('css/'+name+'.css', mimetype='text/css')
 
 if __name__ == '__main__':
 	app.run()	
